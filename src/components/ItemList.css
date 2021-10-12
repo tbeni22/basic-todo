@@ -2,10 +2,6 @@
     width: 80%;
     min-width: 360px;
     max-width: 640px;
-    /*border: 1px solid lightgray;*/
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
     padding: 10px 10px 10px 10px;
     margin: 20px auto 20px auto;
 }
@@ -28,27 +24,17 @@
     display: table;
     clear: both;
 }
-.item-date {
-}
-.item-state {
-}
 
 .item-list {
     text-align: center;
     padding: 10px 20px 10px 20px;
 }
 
-/* add button style */
 #add-btn {
     display: block;
     margin: auto;
-    padding: 6px 22px 6px 22px;
-    font-size: x-large;
-    background: lightblue;
-    border: 0;
-    border-radius: 3px;
 }
-#add-btn:hover {
-    color: white;
-    background: blue;
-}
+
+/*.selected {
+    background: lightblue !important;
+}*/
