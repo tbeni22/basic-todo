@@ -1,6 +1,6 @@
 import React from "react";
 import {TodoItem} from "./TodoItem";
-import Button from '@mui/material/Button';
+import {Button} from '@mui/material';
 
 import "./ItemList.css";
 
