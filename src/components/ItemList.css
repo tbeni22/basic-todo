@@ -38,3 +38,11 @@
 /*.selected {
     background: lightblue !important;
 }*/
+
+.list-container {
+    text-align: center;
+}
+
+.loading-bar {
+    margin: 32px auto 32px auto;
+}

@@ -7,14 +7,16 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 export class EditView extends React.Component {
     constructor(props) {
         super(props);
+        this.saveHandler = props.saveHandler;
         this.state = {
-            title: null,
+            title: "",
             itemState: null,
             date: null,
-            desc: null,
+            desc: "",
         };
     }
 
+    // item state selector handler
     handleStateChange(event, newVal) {
         if (newVal != null)
             this.setState({ itemState: newVal });
@@ -78,6 +80,7 @@ export class EditView extends React.Component {
                         </Grid>
                     </Grid>
 
+                    {/* todo: az onchange és value párosok miatt overlappel a label és a tartalom a textboxokban (title és desc) */}
                     <Grid item>
                         <TextField
                             label="Description"
@@ -94,7 +97,9 @@ export class EditView extends React.Component {
                         {this.renderStateToggle()}
                     </Grid>
                     <Grid item>
-                        <Button variant="contained" startIcon={<SaveOutlinedIcon/>}>
+                        <Button variant="contained"
+                                startIcon={<SaveOutlinedIcon/>}
+                                onClick={() => this.saveHandler()}>
                             Save
                         </Button>
                     </Grid>
