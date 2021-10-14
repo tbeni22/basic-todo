@@ -70,8 +70,8 @@ export class EditView extends React.Component {
                             <TextField id="title-field"
                                        label="Title"
                                        value={this.state.title}
-                                       onChange={(e, newVal) =>
-                                            {this.setState({ title: newVal })}
+                                       onChange={(event) =>
+                                            {this.setState({ title: event.target.value })}
                                        }
                             />
                         </Grid>
@@ -80,15 +80,14 @@ export class EditView extends React.Component {
                         </Grid>
                     </Grid>
 
-                    {/* todo: az onchange és value párosok miatt overlappel a label és a tartalom a textboxokban (title és desc) */}
                     <Grid item>
                         <TextField
                             label="Description"
                             multiline
                             rows={4}
                             value={this.state.desc}
-                            onChange={(e, newVal) =>
-                                {this.setState({ desc: newVal })}
+                            onChange={(event) =>
+                                {this.setState({ desc: event.target.value })}
                             }
                         />
                     </Grid>
