@@ -18,11 +18,14 @@ export class ListView extends React.Component {
         };
     }
 
-    /*async getData(id) {
-        const response = await fetch('https://jsonplaceholder.typicode.com/todos/' + id);
+    async getData(id) {
+        const response = await fetch('https://jsonplaceholder.typicode.com/todos/' + (id + 1));
         const data = await response.json();
-        this.setState({ item: data });
-    }*/
+
+        const currentItems = this.state.items;
+        currentItems.concat({name: data.title, state: data.completed ? "done" : "pending"})
+        this.setState({ items: currentItems });
+    }
 
     addItem() {
         let current = this.state.numOfItems;
@@ -41,17 +44,22 @@ export class ListView extends React.Component {
     render() {
         let list = [];
         for (var i = 0; i < this.state.numOfItems; i++) {
-            var item = this.state.items[i];
-            list.push(<TodoItem name={item != null ? item.name : "name"}
-                                desc="This is the description of the todo item."
-                                date="2021.22.22."
-                                state="completed"
-                                key={i}
-                                id={i}
-                                onSelect={(id) => this.selectItem(id)}
-                                selected={ this.state.selected === i }
-                                loading={ false }
-            />);
+            const item = this.state.items[i];
+            if (item == null) {
+                list.push(<TodoItem loading={true} key={i}/>);
+                /*this.getData(i);*/
+            }
+            else
+                list.push(<TodoItem name={item.name}
+                                    desc="This is the description of the todo item."
+                                    date="2021.22.22."
+                                    state="completed"
+                                    key={i}
+                                    id={i}
+                                    onSelect={(id) => this.selectItem(id)}
+                                    selected={ this.state.selected === i }
+                                    loading={ false }
+                />);
         }
 
         /*<Skeleton className="loading-bar" variant="rectangular" width={420} height={60}/>*/

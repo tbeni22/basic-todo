@@ -8,7 +8,7 @@ function App() {
 
     };
 
-    const selectFunc = (id) => {
+    const selectFunc = (data) => {
 
     };
 
@@ -19,7 +19,7 @@ function App() {
             <EditView saveHandler={saveFunc}/>
             <Divider variant="middle"/>
         </div>
-        <ListView num={2} selectHandler={(data) => selectFunc(data)}/>
+        <ListView num={1} selectHandler={(data) => selectFunc(data)}/>
     </div>
   );
 }
