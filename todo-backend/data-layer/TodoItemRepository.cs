@@ -14,6 +14,11 @@ namespace data_layer
 
     public class TodoItemRepository
     {
+        public static TodoItemRepository repositoryFactory(string connectionString)
+        {
+            return new TodoItemRepository(connectionString);
+        }
+        
         private readonly string connectionString;
 
         public TodoItemRepository(string connectionString)
