@@ -59,19 +59,26 @@ namespace data_layer
             }
         }
 
-        public int Insert(TodoItem item)
+        public (int, bool) Insert(TodoItem item)
         {
-            using (var dbContext = createDbContext())
+            try
             {
-                DbTodoItem newItem = new DbTodoItem(item.Title, item.Description, item.Deadline, item.OrderNumber);
-                newItem.Category = (
-                        from c in dbContext.Categories.AsNoTracking()
-                        where c.Name.Equals(item.CategoryName)
-                        select c
-                    ).Single();
-                dbContext.Add(newItem);
-                dbContext.SaveChanges();
-                return newItem.ID;
+                using (var dbContext = createDbContext())
+                {
+                    DbTodoItem newItem = new DbTodoItem(item.Title, item.Description, item.Deadline, item.OrderNumber);
+                    newItem.Category = (
+                            from c in dbContext.Categories.AsNoTracking()
+                            where c.Name.Equals(item.CategoryName)
+                            select c
+                        ).Single();
+                    dbContext.Add(newItem);
+                    int rowsModified = dbContext.SaveChanges();
+                    return (newItem.ID, rowsModified == 1);
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                throw new NoSuchRecordException();
             }
         }
 
@@ -113,23 +120,30 @@ namespace data_layer
 
         public bool UpdateItem(TodoItem updatedItem)
         {
-            using (var dbContext = createDbContext())
+            try
             {
-                var itemToUpdate = (from ti in dbContext.TodoItems
-                                   where ti.ID == updatedItem.ID
-                                   select ti)
-                                   .Single();
-                itemToUpdate.Title = updatedItem.Title;
-                itemToUpdate.Description = updatedItem.Description;
-                itemToUpdate.Deadline = updatedItem.Deadline;
-                itemToUpdate.OrderNumber = updatedItem.OrderNumber;
+                using (var dbContext = createDbContext())
+                {
+                    var itemToUpdate = (from ti in dbContext.TodoItems
+                                        where ti.ID == updatedItem.ID
+                                        select ti)
+                                       .Single();
+                    itemToUpdate.Title = updatedItem.Title;
+                    itemToUpdate.Description = updatedItem.Description;
+                    itemToUpdate.Deadline = updatedItem.Deadline;
+                    itemToUpdate.OrderNumber = updatedItem.OrderNumber;
 
-                var newCategory = from c in dbContext.Categories.AsNoTracking()
-                                  where c.Name == updatedItem.CategoryName
-                                  select c;
-                itemToUpdate.Category = newCategory.Single();
+                    var newCategory = from c in dbContext.Categories.AsNoTracking()
+                                      where c.Name == updatedItem.CategoryName
+                                      select c;
+                    itemToUpdate.Category = newCategory.Single();
 
-                return dbContext.SaveChanges() == 1;
+                    return dbContext.SaveChanges() == 1;
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                throw new NoSuchRecordException();
             }
         }
     }
