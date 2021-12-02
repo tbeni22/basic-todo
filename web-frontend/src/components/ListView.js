@@ -6,34 +6,15 @@ import "./ItemList.css";
 
 export class ListView extends React.Component {
     constructor(props) {
-        super(props);
-        this.handleSelect = props.selectHandler;
-        this.state = {
-            numOfItems: props.num ? props.num : 0,
-            selected: null,
-            loading: false,
-            items: [
-                {name: "Task 1"}, {name: "Task 2"}
-            ],
-        };
+        super(props)
+        this.handleSelect = props.selectHandler
+        this.handleRemove = props.removeHandler
+        this.handleMove = props.moveHandler
+        this.items = props.items
+        this.state = {}
     }
 
-    async getData(id) {
-        const response = await fetch('https://jsonplaceholder.typicode.com/todos/' + (id + 1));
-        const data = await response.json();
-
-        const currentItems = this.state.items;
-        currentItems.concat({name: data.title, state: data.completed ? "done" : "pending"})
-        this.setState({ items: currentItems });
-    }
-
-    addItem() {
-        let current = this.state.numOfItems;
-        this.setState({
-            numOfItems: current + 1
-        });
-    }
-
+    // kell egyáltalán?
     selectItem(id) {
         this.setState({
             selected: id
@@ -41,38 +22,61 @@ export class ListView extends React.Component {
         this.handleSelect(id);
     }
 
-    render() {
-        let list = [];
-        for (var i = 0; i < this.state.numOfItems; i++) {
-            const item = this.state.items[i];
-            if (item == null) {
-                list.push(<TodoItem loading={true} key={i}/>);
-                /*this.getData(i);*/
-            }
-            else
-                list.push(<TodoItem name={item.name}
-                                    desc="This is the description of the todo item."
-                                    date="2021.22.22."
-                                    state="completed"
-                                    key={i}
-                                    id={i}
-                                    onSelect={(id) => this.selectItem(id)}
-                                    selected={ this.state.selected === i }
-                                    loading={ false }
-                />);
-        }
+    idCheck(item, id) {
+        return item.id === id
+    }
 
-        /*<Skeleton className="loading-bar" variant="rectangular" width={420} height={60}/>*/
+    remove(id) {
+        this.handleRemove(id) // remove from db
+        let idx = this.items.findIndex((item) => this.idCheck(item, id))
+        this.items.splice(idx, 1)
+    }
+
+    move(id, dir) {
+
+        let idx = this.items.findIndex((item) => this.idCheck(item, id))
+        let newIdx = idx + dir
+
+        if (newIdx < 0 || newIdx > this.items.length - 1)
+            return
+
+        this.handleMove(id, dir)
+
+        let tmp = this.items[idx]
+        this.items[idx] = this.items[newIdx]
+        this.items[newIdx] = tmp
+    }
+
+    render() {
+        this.items = this.props.items
+        let list = this.items.flatMap((item) => {
+            if (typeof(item) == "undefined") return [];
+            if (item == null || item.loading)
+                return <TodoItem loading={true}/>; // key?
+            else
+                return <TodoItem title={item.title}
+                                 desc={item.desc}
+                                 date={item.date}
+                                 state={item.state}
+                                 key={item.id}
+                                 id={item.id}
+                                 onSelect={(id) => this.selectItem(id)}
+                                 selected={this.state.selected === item.id}
+                                 loading={false}
+                                 deleteHandler={(id) => this.remove(id)}
+                                 moveHandler={(id, dir) => this.move(id, dir)}
+                        />
+        })
 
         return (
             <div className="list-container">
-                { (this.state.loading) ?
+                { (this.props.loading) ?
                     <CircularProgress className="loading-bar"/>
                     : <div className="item-list">{list}</div> }
-                <Button variant="contained" id="add-btn"
-                        onClick={() => this.addItem()}>
+                {/*<Button variant="contained" id="add-btn"
+                        onClick={() => null}>
                     +
-                </Button>
+                </Button>*/}
             </div>
         )
     }

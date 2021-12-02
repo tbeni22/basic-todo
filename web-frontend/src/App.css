@@ -17,6 +17,7 @@ body {
   background: #F5F5F5;
   max-width: 860px;
   margin: auto;
+  z-index: 2;
 }
 
 #edit-panel {
