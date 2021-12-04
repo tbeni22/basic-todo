@@ -98,8 +98,8 @@ export class EditView extends React.Component {
                     <Grid item>
                         <Button variant="contained"
                                 startIcon={<SaveOutlinedIcon/>}
-                                onClick={() => this.saveHandler()}>
-                            Save
+                                onClick={() => this.saveHandler(this.state)}>
+                            Save (add)
                         </Button>
                     </Grid>
                 </Grid>

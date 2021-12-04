@@ -12,8 +12,17 @@ class App extends React.Component {
         }
     }
 
-    saveFunc = () => {
-
+    saveFunc = (newItem) => {
+        // todo: add to db
+        let date = new Date (newItem.date)
+        let newTodo = {
+            title: newItem.title,
+            desc: newItem.desc,
+            date: date.toLocaleDateString(),
+            state: newItem.itemState,
+            id: 10,
+        } // todo: id should not be constant
+        this.setState({ items: this.state.items.concat([newTodo]) })
     };
 
     selectFunc = (data) => {
