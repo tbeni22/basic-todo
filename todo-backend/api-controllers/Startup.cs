@@ -36,7 +36,7 @@ namespace api_controllers
             {
                 o.AddPolicy("CorsPolicy", builder =>
                 {
-                    builder.WithOrigins("http://locallhost:3000")
+                    builder.WithOrigins("http://localhost:3000")
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
@@ -51,9 +51,11 @@ namespace api_controllers
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
             {
