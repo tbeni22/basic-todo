@@ -55,9 +55,9 @@ export class ListView extends React.Component {
                 return <TodoItem loading={true}/>; // key?
             else
                 return <TodoItem title={item.title}
-                                 desc={item.desc}
-                                 date={item.date}
-                                 state={item.state}
+                                 desc={item.description}
+                                 date={new Date(item.deadline).toLocaleDateString()}
+                                 state={item.categoryName}
                                  key={item.id}
                                  id={item.id}
                                  onSelect={(id) => this.selectItem(id)}

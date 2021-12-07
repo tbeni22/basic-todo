@@ -8,60 +8,77 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            loading: true,
             items: []
         }
     }
 
-    saveFunc = (newItem) => {
-        // todo: add to db
+    async addItem(newItem) {
+        const response = await fetch("http://localhost:5000/todos/", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newItem)
+        })
+        const data = await response.json()
+        if (response.ok)
+            return data.id;
+        else {
+            throw Error("Post failed")
+        }
+    }
+
+    addItemHandler(newItem) {
         let date = new Date (newItem.date)
         let newTodo = {
             title: newItem.title,
-            desc: newItem.desc,
-            date: date.toLocaleDateString(),
-            state: newItem.itemState,
-            id: 10,
-        } // todo: id should not be constant
-        this.setState({ items: this.state.items.concat([newTodo]) })
+            description: newItem.desc,
+            deadline: date.toISOString(),
+            categoryName: newItem.itemState
+        }
+        this.addItem(newTodo).then(id => {
+            newTodo.id = id
+            this.setState({ items: this.state.items.concat([newTodo])})
+        })
     };
 
     selectFunc = (data) => {
 
     };
 
-    removeFunc(id) {
-        // todo: remove from db
+    async deleteItem(id) {
+        const response = await fetch("http://localhost:5000/todos/" + id, {
+            method: 'DELETE'
+        })
+        return response.status
     }
 
-    moveFunc(id, dir) {
+    removeItemHandler(id) {
+        this.deleteItem(id)
+            .then(code => {
+                console.log(code)
+            })
+    }
+
+    moveItemHandler(id, dir) {
         // todo: update in db
     }
 
-    async getData(id) {
-        const response = await fetch('https://jsonplaceholder.typicode.com/todos/' + (id + 1));
+    async getList() {
+        const response = await fetch("http://localhost:5000/todos/");
         const data = await response.json();
-
-        const currentItems = this.state.items;
-        currentItems.concat({title: data.title, state: data.completed ? "done" : "pending"})
-        this.setState({ items: currentItems });
+        this.setState({ items: data });
+        return response.status === 200
     }
 
     componentDidMount() {
-        const list = []
-        for (let i = 0; i < 2; i++) {
-            list.push({
-                title: "Item " + i,
-                desc: "This is the description of the todo item.",
-                date: "2021.22.22.",
-                state: "completed",
-                id: i,
-                loading: false}
-            );
-        }
-        this.setState({
-            items: list
+        this.getList().then(success => {
+            if (success) {
+                this.setState({loading: false})
+                console.log("list loaded")
+            }
         })
-
     }
 
     render() {
@@ -69,13 +86,14 @@ class App extends React.Component {
          <div className="App">
             <div id="top-panel">
                 <h1>Tasks to do</h1>
-                <EditView saveHandler={this.saveFunc.bind(this)}/>
+                <EditView saveHandler={this.addItemHandler.bind(this)}/>
                 <Divider variant="middle"/>
             </div>
             <ListView items={this.state.items}
+                      loading={this.state.loading}
                       selectHandler={(data) => this.selectFunc(data)}
-                      removeHandler={(id) => this.removeFunc(id)}
-                      moveHandler={(id, dir) => this.moveFunc(id, dir)}
+                      removeHandler={(id) => this.removeItemHandler(id)}
+                      moveHandler={(id, dir) => this.moveItemHandler(id, dir)}
             />
         </div> );
     }
