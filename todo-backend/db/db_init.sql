@@ -1,6 +1,6 @@
-if object_id('dbo.TodoItem', 'U') is not null
+if object_id('dbo.TodoItems', 'U') is not null
     drop table TodoItems
-if object_id('dbo.Category', 'U') is not null
+if object_id('dbo.Categories', 'U') is not null
     drop table Categories
 
 create table Categories (
@@ -14,7 +14,7 @@ create table TodoItems (
 		constraint PK_TodoItemID primary key,
 	Title nvarchar(127) not null,
 	Description nvarchar(max) not null,
-	Deadline datetime not null,
+	Deadline datetime2,
 	CategoryID int not null 
 		constraint FK_CategoryID foreign key (CategoryID) references Categories (ID),
 	OrderNumber int not null

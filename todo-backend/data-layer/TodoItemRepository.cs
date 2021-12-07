@@ -64,21 +64,36 @@ namespace data_layer
             }
         }
 
-        public (int, bool) Insert(TodoItem item)
+        public (TodoItem, bool) Insert(TodoItem item)
         {
             try
             {
                 using (var dbContext = createDbContext())
                 {
-                    DbTodoItem newItem = new DbTodoItem(item.Title, item.Description, item.Deadline, item.OrderNumber);
+                    int orderNumber;
+                    if (item.OrderNumber == null)
+                    {
+                        try
+                        {
+                            var maxOrderNum = dbContext.TodoItems.Max(ti => ti.OrderNumber);
+                            orderNumber = maxOrderNum + 1;
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            orderNumber = 0;    // necessary if table is empty
+                        }
+                    }
+                    else
+                        orderNumber = (int)item.OrderNumber;
+                    DbTodoItem newItem = new DbTodoItem(item.Title, item.Description != null ? item.Description : "", item.Deadline, orderNumber);
                     newItem.Category = (
-                            from c in dbContext.Categories.AsNoTracking()
+                            from c in dbContext.Categories
                             where c.Name.Equals(item.CategoryName)
                             select c
                         ).Single();
                     dbContext.Add(newItem);
                     int rowsModified = dbContext.SaveChanges();
-                    return (newItem.ID, rowsModified == 1);
+                    return (new TodoItem(newItem), rowsModified == 1);
                 }
             }
             catch (InvalidOperationException)
@@ -136,9 +151,9 @@ namespace data_layer
                     itemToUpdate.Title = updatedItem.Title;
                     itemToUpdate.Description = updatedItem.Description;
                     itemToUpdate.Deadline = updatedItem.Deadline;
-                    itemToUpdate.OrderNumber = updatedItem.OrderNumber;
+                    itemToUpdate.OrderNumber = (int)updatedItem.OrderNumber;
 
-                    var newCategory = from c in dbContext.Categories.AsNoTracking()
+                    var newCategory = from c in dbContext.Categories
                                       where c.Name == updatedItem.CategoryName
                                       select c;
                     itemToUpdate.Category = newCategory.Single();

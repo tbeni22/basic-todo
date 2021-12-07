@@ -41,12 +41,12 @@ namespace api_controllers.Controllers
 
         // POST todos
         [HttpPost]
-        public ActionResult<int> Post([FromBody] TodoItem newItem)
+        public ActionResult Post([FromBody] TodoItem newItem)
         {
             try
             {
-                (int id, bool modified) = repo.Insert(newItem);
-                return modified ? Created("todos/" + id, newItem) : new StatusCodeResult(500);
+                (TodoItem item, bool modified) = repo.Insert(newItem);
+                return modified ? Created("todos/" + item.ID, item) : new StatusCodeResult(500);
             }
             catch (NoSuchRecordException)
             {
@@ -58,6 +58,7 @@ namespace api_controllers.Controllers
         [HttpPut("{id}")]
         public ActionResult Put([FromRoute] int id, [FromBody] TodoItem item) // todo: are there problems with properties without setters?
         {
+            if (id != item.ID) return BadRequest();
             try
             {
                 return repo.UpdateItem(item) ? Ok() : new StatusCodeResult(500);

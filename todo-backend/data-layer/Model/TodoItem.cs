@@ -7,7 +7,7 @@ namespace data_layer
     {
         public TodoItem() { }
 
-        public TodoItem(int id, string title, string desc, DateTime deadline, int ordernum, string category)
+        public TodoItem(int id, string title, string desc, DateTime? deadline, int ordernum, string category)
         {
             ID = id;
             Title = title;
@@ -21,11 +21,11 @@ namespace data_layer
             : this(ti.ID, ti.Title, ti.Description, ti.Deadline, ti.OrderNumber, ti.Category.Name)
         { }
 
-        public int ID { get; }
+        public int ID { get; set;  }
         public string Title { get; set; }
-        public string Description { get; set; }
-        public DateTime Deadline { get; set; }
-        public int OrderNumber { get; }
+        public string? Description { get; set; }
+        public DateTime? Deadline { get; set; }
+        public int? OrderNumber { get; set; }
         public string CategoryName { get; set; }
     }
 }
