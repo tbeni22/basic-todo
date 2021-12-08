@@ -24,13 +24,17 @@ export function TodoItem(props) {
                             onClick={() => props.moveHandler(props.id, 1)}>
                         Down
                     </Button>
+                    <Button variant="contained"
+                            onClick={() => props.editHandler(props.id)}>
+                        Edit
+                    </Button>
                 </div>
             </div>
         );
     }
 
     return (
-        <Card className={props.selected ? "todo-item selected" : "todo-item"} onClick={() => props.onSelect(props.id)}>
+        <Card className="todo-item">
             { props.loading ?
                 <CircularProgress className="loading-bar"/>
                 : renderBody()

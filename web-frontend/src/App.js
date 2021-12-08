@@ -80,7 +80,7 @@ class App extends React.Component {
             throw Error("Post failed")
     }
 
-    selectItemHandler(id) {
+    editItemHandler(id) {
         this.selectedItem = this.state.items.find(item => item.id === id)
         this.setState({editDialogOpen: true})
     };
@@ -148,7 +148,7 @@ class App extends React.Component {
             </div>
             <ListView items={this.state.items}
                       loading={this.state.loading}
-                      selectHandler={(data) => this.selectItemHandler(data)}
+                      editHandler={(data) => this.editItemHandler(data)}
                       removeHandler={(id) => this.removeItemHandler(id)}
                       moveHandler={(id, dir) => this.moveItemHandler(id, dir)}
             />

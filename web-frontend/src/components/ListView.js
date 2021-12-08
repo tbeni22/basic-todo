@@ -7,18 +7,15 @@ import "./ItemList.css";
 export class ListView extends React.Component {
     constructor(props) {
         super(props)
-        this.handleSelect = props.selectHandler
+        this.handleEdit = props.editHandler
         this.handleRemove = props.removeHandler
         this.handleMove = props.moveHandler
         this.items = props.items
         this.state = {}
     }
 
-    selectItem(id) {
-        this.setState({
-            selected: id
-        })  // not necessary anymore
-        this.handleSelect(id);
+    edit(id) {
+        this.handleEdit(id);
     }
 
     idCheck(item, id) {
@@ -56,8 +53,7 @@ export class ListView extends React.Component {
                                  state={item.categoryName}
                                  key={item.id}
                                  id={item.id}
-                                 onSelect={(id) => this.selectItem(id)}
-                                 selected={this.state.selected === item.id}
+                                 editHandler={(id) => this.edit(id)}
                                  loading={false}
                                  deleteHandler={(id) => this.remove(id)}
                                  moveHandler={(id, dir) => this.move(id, dir)}
