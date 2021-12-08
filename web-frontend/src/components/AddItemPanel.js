@@ -12,6 +12,13 @@ export class AddItemPanel extends React.Component {
         };
     }
 
+    initiateSave() {
+        this.setState({
+            title: ""
+        })  // clear title input field
+        this.saveHandler(this.state)
+    }
+
     render() {
         return(
             <Card id="add-panel" variant="outlined">
@@ -20,6 +27,9 @@ export class AddItemPanel extends React.Component {
                       justifyContent="center"
                       alignItems="center"
                 >
+                    <Grid item>
+                        Add a new item:
+                    </Grid>
                     <Grid item>
                         <TextField id="title-field"
                                    label="Title"
@@ -32,7 +42,7 @@ export class AddItemPanel extends React.Component {
                     <Grid item>
                         <Button variant="contained"
                                 startIcon={<AddIcon/>}
-                                onClick={() => this.saveHandler(this.state)}>
+                                onClick={this.initiateSave.bind(this)}>
                             Add
                         </Button>
                     </Grid>

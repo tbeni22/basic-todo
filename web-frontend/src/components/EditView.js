@@ -60,6 +60,7 @@ export class EditView extends React.Component {
                     value={this.state.date}
                     onChange={(newVal) => {this.setState({ date: newVal })}}
                     renderInput={(props) => <TextField {...props} />}
+                    minDate={new Date('2000-01-01')}
                 />
             </LocalizationProvider>
         );

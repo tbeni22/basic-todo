@@ -7,6 +7,10 @@ export function TodoItem(props) {
             new Date(props.date).toLocaleDateString()
             : "No date specified"
 
+        // capitalize first letter of state string
+        let state = props.state
+        state = state.charAt(0).toUpperCase() + state.slice(1)
+
         return (
             <div>
                 <CardContent>
@@ -22,7 +26,7 @@ export function TodoItem(props) {
                                 <span className="item-date">{dateString}</span>
                             </Grid>
                             <Grid item xs={6}>
-                                <span className="item-state">{props.state}</span>
+                                <span className="item-state">{state}</span>
                             </Grid>
                         </Grid>
                     </Grid>
