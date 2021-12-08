@@ -7,6 +7,7 @@ export class EditDialog extends React.Component {
         if (this.props.item == null)
             return null
         let item = this.props.item
+
         return (
             <Dialog open={this.props.isOpen} onClose={this.props.handleClose}>
                 <DialogTitle>Editing item - {item.title}</DialogTitle>

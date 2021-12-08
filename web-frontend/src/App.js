@@ -5,7 +5,7 @@ import {EditDialog} from "./components/EditDialog";
 import {Divider} from "@mui/material";
 import React from "react";
 
-class App extends React.Component {
+export default class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -16,6 +16,18 @@ class App extends React.Component {
         this.selectedItem = null
     }
 
+    // converts the locally used item object to the appropriate form for the REST API
+    convertToDto(item) {
+        return {
+            id: item.id,
+            title: item.title,
+            description: item.desc,
+            deadline: item.date != null ? new Date (item.date).toISOString() : null,
+            categoryName: item.itemState
+        }
+    }
+
+    // add item to backend
     async addItem(newItem) {
         const response = await fetch("http://localhost:5000/todos/", {
             method: 'POST',
@@ -32,16 +44,6 @@ class App extends React.Component {
         }
     }
 
-    convertToDto(item) {
-        return {
-            id: item.id,
-            title: item.title,
-            description: item.desc,
-            deadline: item.date != null ? new Date (item.date).toISOString() : null,
-            categoryName: item.itemState
-        }
-    }
-
     addItemHandler(newItem) {
         const newTodo = this.convertToDto(newItem)
         this.addItem(newTodo).then(id => {
@@ -50,9 +52,37 @@ class App extends React.Component {
         })
     };
 
-    closeEditDialog() {
+    // update item on backend
+    async updateItem(item) {
+        const response = await fetch("http://localhost:5000/todos/" + item.id, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(item)
+        })
+        if (!response.ok)
+            throw Error("Post failed")
+    }
+
+    moveItemHandler(idx, dir) {
+        let itemsCopy = this.state.items
+        let newIdx = idx + dir
+
+        itemsCopy[idx].orderNumber += dir
+        itemsCopy[newIdx].orderNumber -= dir
+
+        // update in db
+        this.updateItem(itemsCopy[idx]).then()
+        this.updateItem(itemsCopy[newIdx]).then()
+
+        // update locally
+        let tmp = itemsCopy[idx]
+        itemsCopy[idx] = itemsCopy[newIdx]
+        itemsCopy[newIdx] = tmp
+
         this.setState({
-            editDialogOpen: false
+            items: itemsCopy
         })
     }
 
@@ -68,23 +98,20 @@ class App extends React.Component {
             })
     }
 
-    async updateItem(item) {
-        const response = await fetch("http://localhost:5000/todos/" + item.id, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(item)
+    closeEditDialog() {
+        this.setState({
+            editDialogOpen: false
         })
-        if (!response.ok)
-            throw Error("Post failed")
     }
 
-    editItemHandler(id) {
+    openEditDialog(id) {
         this.selectedItem = this.state.items.find(item => item.id === id)
-        this.setState({editDialogOpen: true})
+        this.setState({
+            editDialogOpen: true
+        })
     };
 
+    // delete item from backend
     async deleteItem(id) {
         const response = await fetch("http://localhost:5000/todos/" + id, {
             method: 'DELETE'
@@ -104,27 +131,7 @@ class App extends React.Component {
             })
     }
 
-    moveItemHandler(idx, dir) {
-        let itemsCopy = this.state.items
-        let newIdx = idx + dir
-
-        itemsCopy[idx].orderNumber += dir
-        itemsCopy[newIdx].orderNumber -= dir
-
-        // update in db
-        this.updateItem(itemsCopy[idx])
-        this.updateItem(itemsCopy[newIdx])
-
-        // update locally
-        let tmp = itemsCopy[idx]
-        itemsCopy[idx] = itemsCopy[newIdx]
-        itemsCopy[newIdx] = tmp
-
-        this.setState({
-            items: itemsCopy
-        })
-    }
-
+    // fetch item list from backend
     async getList() {
         const response = await fetch("http://localhost:5000/todos/");
         const data = await response.json();
@@ -153,7 +160,7 @@ class App extends React.Component {
             </div>
             <ListView items={this.state.items}
                       loading={this.state.loading}
-                      editHandler={(data) => this.editItemHandler(data)}
+                      editHandler={(data) => this.openEditDialog(data)}
                       removeHandler={(id) => this.removeItemHandler(id)}
                       moveHandler={(id, dir) => this.moveItemHandler(id, dir)}
             />
@@ -165,5 +172,3 @@ class App extends React.Component {
         </div> );
     }
 }
-
-export default App;

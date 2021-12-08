@@ -14,16 +14,11 @@ export class ListView extends React.Component {
         this.state = {}
     }
 
-    edit(id) {
-        this.handleEdit(id);
-    }
-
     move(id, dir) {
-
         let idx = this.items.findIndex((item) => item.id === id)
         let newIdx = idx + dir
 
-        // prevent
+        // prevent moving item out of array bounds
         if (newIdx < 0 || newIdx > this.items.length - 1)
             return
 
@@ -43,7 +38,7 @@ export class ListView extends React.Component {
                                  state={item.categoryName}
                                  key={item.id}
                                  id={item.id}
-                                 editHandler={(id) => this.edit(id)}
+                                 editHandler={(id) => this.handleEdit(id)}
                                  loading={false}
                                  deleteHandler={(id) => this.handleRemove(id)}
                                  moveHandler={(id, dir) => this.move(id, dir)}

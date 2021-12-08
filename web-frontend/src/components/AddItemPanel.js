@@ -25,7 +25,7 @@ export class AddItemPanel extends React.Component {
                                    label="Title"
                                    value={this.state.title}
                                    onChange={(event) =>
-                                   {this.setState({ title: event.target.value })}
+                                        {this.setState({ title: event.target.value })}
                                    }
                         />
                     </Grid>
