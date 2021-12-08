@@ -1,8 +1,8 @@
 import './App.css';
 import {ListView} from "./components/ListView";
-import {EditView} from "./components/EditView";
+import {AddItemPanel} from "./components/AddItemPanel";
 import {EditDialog} from "./components/EditDialog";
-import {Card, Divider} from "@mui/material";
+import {Divider} from "@mui/material";
 import React from "react";
 
 class App extends React.Component {
@@ -124,9 +124,7 @@ class App extends React.Component {
          <div className="App">
             <div id="top-panel">
                 <h1>Tasks to do</h1>
-                <Card id="edit-panel" className="todo-item">
-                    <EditView saveHandler={this.addItemHandler.bind(this)}/>
-                </Card>
+                <AddItemPanel saveHandler={this.addItemHandler.bind(this)}/>
                 <Divider variant="middle"/>
             </div>
             <ListView items={this.state.items}

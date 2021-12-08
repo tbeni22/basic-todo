@@ -1,6 +1,6 @@
 import React from "react";
 import {TodoItem} from "./TodoItem";
-import {Button, CircularProgress} from '@mui/material';
+import {CircularProgress} from '@mui/material';
 
 import "./ItemList.css";
 
@@ -14,11 +14,10 @@ export class ListView extends React.Component {
         this.state = {}
     }
 
-    // kell egyáltalán?
     selectItem(id) {
         this.setState({
             selected: id
-        })
+        })  // not necessary anymore
         this.handleSelect(id);
     }
 
@@ -73,10 +72,6 @@ export class ListView extends React.Component {
                 { (this.props.loading) ?
                     <CircularProgress className="loading-bar"/>
                     : <div className="item-list">{list}</div> }
-                {/*<Button variant="contained" id="add-btn"
-                        onClick={() => null}>
-                    +
-                </Button>*/}
             </div>
         )
     }

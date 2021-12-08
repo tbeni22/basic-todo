@@ -20,7 +20,10 @@ body {
   z-index: 2;
 }
 
-#edit-panel {
-  margin-top: 40px;
-  padding: 25px 20px 25px 20px;
+#add-panel {
+  width: 100%;
+  min-width: 220px;
+  max-width: 420px;
+  margin: 25px auto 12px auto;
+  padding: 20px 20px 15px 20px;
 }
