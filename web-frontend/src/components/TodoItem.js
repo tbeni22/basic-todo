@@ -1,34 +1,46 @@
 import React from "react";
-import {Button, Card, CircularProgress} from "@mui/material";
+import {Button, Card, CardActions, CardContent, CircularProgress, Grid} from "@mui/material";
 
 export function TodoItem(props) {
     function renderBody() {
+        let dateString = (props.date != null) ?
+            new Date(props.date).toLocaleDateString()
+            : "No date specified"
+
         return (
             <div>
-                <p className="item-name">{props.title}</p>
-                <p className="item-desc">{props.desc}</p>
-                <div className="item-prop-container">
-                    <span className="item-date">{props.date}</span>
-                    <span className="item-state">{props.state}</span>
-                </div>
-                <div className="item-prop-container">
-                    <Button variant="contained"
-                            onClick={() => props.deleteHandler(props.id)}>
+                <CardContent>
+                    <Grid direction="column" container spacing={0}>
+                        <Grid item>
+                            <p className="item-name">{props.title}</p>
+                        </Grid>
+                        <Grid item>
+                            <p className="item-desc">{props.desc}</p>
+                        </Grid>
+                        <Grid item container spacing={2}>
+                            <Grid item xs={6}>
+                                <span className="item-date">{dateString}</span>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <span className="item-state">{props.state}</span>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </CardContent>
+                <CardActions>
+                    <Button onClick={() => props.deleteHandler(props.id)}>
                         Delete
                     </Button>
-                    <Button variant="contained"
-                            onClick={() => props.moveHandler(props.id, -1)}>
+                    <Button onClick={() => props.moveHandler(props.id, -1)}>
                         Up
                     </Button>
-                    <Button variant="contained"
-                            onClick={() => props.moveHandler(props.id, 1)}>
+                    <Button onClick={() => props.moveHandler(props.id, 1)}>
                         Down
                     </Button>
-                    <Button variant="contained"
-                            onClick={() => props.editHandler(props.id)}>
+                    <Button onClick={() => props.editHandler(props.id)}>
                         Edit
                     </Button>
-                </div>
+                </CardActions>
             </div>
         );
     }

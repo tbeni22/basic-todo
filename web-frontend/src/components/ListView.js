@@ -49,7 +49,7 @@ export class ListView extends React.Component {
             else
                 return <TodoItem title={item.title}
                                  desc={item.description}
-                                 date={new Date(item.deadline).toLocaleDateString()}
+                                 date={item.deadline}
                                  state={item.categoryName}
                                  key={item.id}
                                  id={item.id}
