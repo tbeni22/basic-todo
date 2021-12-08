@@ -94,8 +94,13 @@ class App extends React.Component {
 
     removeItemHandler(id) {
         this.deleteItem(id)
-            .then(code => {
-                console.log(code)
+            .then(() => {
+                let itemsCopy = this.state.items
+                let idx = itemsCopy.findIndex((item) => item.id === id)
+                itemsCopy.splice(idx, 1)
+                this.setState({
+                    items: itemsCopy
+                })
             })
     }
 

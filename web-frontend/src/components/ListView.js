@@ -18,19 +18,9 @@ export class ListView extends React.Component {
         this.handleEdit(id);
     }
 
-    idCheck(item, id) {
-        return item.id === id
-    }
-
-    remove(id) {
-        this.handleRemove(id) // remove from db
-        let idx = this.items.findIndex((item) => this.idCheck(item, id))
-        this.items.splice(idx, 1)
-    }
-
     move(id, dir) {
 
-        let idx = this.items.findIndex((item) => this.idCheck(item, id))
+        let idx = this.items.findIndex((item) => item.id === id)
         let newIdx = idx + dir
 
         // prevent
@@ -55,7 +45,7 @@ export class ListView extends React.Component {
                                  id={item.id}
                                  editHandler={(id) => this.edit(id)}
                                  loading={false}
-                                 deleteHandler={(id) => this.remove(id)}
+                                 deleteHandler={(id) => this.handleRemove(id)}
                                  moveHandler={(id, dir) => this.move(id, dir)}
                         />
         })
