@@ -7,7 +7,8 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 export class EditView extends React.Component {
     constructor(props) {
         super(props);
-        this.saveHandler = props.saveHandler;
+        this.saveHandler = props.saveHandler
+        this.cancelHandler = props.cancelHandler
         if (props.itemData == null) {
             this.state = {
                 title: "",
@@ -111,6 +112,11 @@ export class EditView extends React.Component {
                             startIcon={<SaveOutlinedIcon/>}
                             onClick={() => this.saveHandler(this.state)}>
                         Save
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button onClick={this.cancelHandler}>
+                        Cancel
                     </Button>
                 </Grid>
             </Grid>

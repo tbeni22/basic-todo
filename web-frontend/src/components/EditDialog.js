@@ -1,10 +1,6 @@
 import * as React from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogTitle from '@mui/material/DialogTitle';
 import {EditView} from "./EditView";
-//import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
+import {Dialog, DialogTitle, DialogActions} from "@mui/material";
 
 export class EditDialog extends React.Component {
     render() {
@@ -14,15 +10,11 @@ export class EditDialog extends React.Component {
         return (
             <Dialog open={this.props.isOpen} onClose={this.props.handleClose}>
                 <DialogTitle>Editing item - {item.title}</DialogTitle>
-                <EditView itemData={item} saveHandler={this.props.saveHandler}/>
-                <DialogActions>
-                    <Button onClick={this.props.handleClose}>Cancel</Button>
-                    {/*<Button variant="contained"
-                            startIcon={<SaveOutlinedIcon/>}
-                            onClick={_ => this.props.saveHandler(item)}>
-                        Save
-                    </Button>*/}
-                </DialogActions>
+                <EditView itemData={item}
+                          saveHandler={this.props.saveHandler}
+                          cancelHandler={this.props.handleClose}
+                />
+                <DialogActions>{null}</DialogActions>
             </Dialog>
         )
     }
