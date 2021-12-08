@@ -99,8 +99,25 @@ class App extends React.Component {
             })
     }
 
-    moveItemHandler(id, dir) {
-        // todo: update in db
+    moveItemHandler(idx, dir) {
+        let itemsCopy = this.state.items
+        let newIdx = idx + dir
+
+        itemsCopy[idx].orderNumber += dir
+        itemsCopy[newIdx].orderNumber -= dir
+
+        // update in db
+        this.updateItem(itemsCopy[idx])
+        this.updateItem(itemsCopy[newIdx])
+
+        // update locally
+        let tmp = itemsCopy[idx]
+        itemsCopy[idx] = itemsCopy[newIdx]
+        itemsCopy[newIdx] = tmp
+
+        this.setState({
+            items: itemsCopy
+        })
     }
 
     async getList() {

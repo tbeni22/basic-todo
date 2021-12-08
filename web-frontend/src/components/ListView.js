@@ -36,14 +36,11 @@ export class ListView extends React.Component {
         let idx = this.items.findIndex((item) => this.idCheck(item, id))
         let newIdx = idx + dir
 
+        // prevent
         if (newIdx < 0 || newIdx > this.items.length - 1)
             return
 
-        this.handleMove(id, dir)
-
-        let tmp = this.items[idx]
-        this.items[idx] = this.items[newIdx]
-        this.items[newIdx] = tmp
+        this.handleMove(idx, dir) // update in db and locally
     }
 
     render() {
