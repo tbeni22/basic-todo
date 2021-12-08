@@ -116,7 +116,9 @@ class App extends React.Component {
                 this.setState({loading: false})
                 console.log("list loaded")
             }
-        })
+        }).catch(() =>
+            this.setState({loading: null})
+        )
     }
 
     render() {

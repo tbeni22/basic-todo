@@ -1,6 +1,6 @@
 import React from "react";
 import {TodoItem} from "./TodoItem";
-import {CircularProgress} from '@mui/material';
+import {Alert, AlertTitle, CircularProgress} from '@mui/material';
 
 import "./ItemList.css";
 
@@ -67,11 +67,27 @@ export class ListView extends React.Component {
                         />
         })
 
+        const renderLoading = (isLoading) => {
+            if (isLoading == null) {
+                return (
+                    <Alert severity="error" id="list-load-error-msg" className="list-substitute">
+                        <AlertTitle>Error</AlertTitle>
+                        Failed to load list from server. Check your internet connection and reload the page.
+                    </Alert>
+                )
+            }
+            else if (isLoading) {
+                return <CircularProgress className="list-substitute"/>
+            }
+        }
+
         return (
             <div className="list-container">
-                { (this.props.loading) ?
-                    <CircularProgress className="loading-bar"/>
-                    : <div className="item-list">{list}</div> }
+                {
+                    (this.props.loading === false) ?
+                        <div className="item-list">{list}</div>
+                    : renderLoading(this.props.loading)
+                }
             </div>
         )
     }

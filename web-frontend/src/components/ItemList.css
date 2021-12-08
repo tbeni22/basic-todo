@@ -38,6 +38,12 @@
     text-align: center;
 }
 
-.loading-bar {
+.list-container > #list-load-error-msg {
+    text-align: initial;
+    max-width: 420px;
+    min-width: 360px;
+}
+
+.list-substitute, .loading-bar {
     margin: 32px auto 32px auto;
 }
