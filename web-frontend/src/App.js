@@ -1,7 +1,8 @@
 import './App.css';
 import {ListView} from "./components/ListView";
 import {EditView} from "./components/EditView";
-import {Divider} from "@mui/material";
+import {EditDialog} from "./components/EditDialog";
+import {Card, Divider} from "@mui/material";
 import React from "react";
 
 class App extends React.Component {
@@ -9,8 +10,10 @@ class App extends React.Component {
         super(props);
         this.state = {
             loading: true,
-            items: []
+            items: [],
+            editDialogOpen: false
         }
+        this.selectedItem = null
     }
 
     async addItem(newItem) {
@@ -29,22 +32,57 @@ class App extends React.Component {
         }
     }
 
-    addItemHandler(newItem) {
-        let date = new Date (newItem.date)
-        let newTodo = {
-            title: newItem.title,
-            description: newItem.desc,
-            deadline: date.toISOString(),
-            categoryName: newItem.itemState
+    convertToDto(item) {
+        return {
+            id: item.id,
+            title: item.title,
+            description: item.desc,
+            deadline: item.date != null ? new Date (item.date).toISOString() : null,
+            categoryName: item.itemState
         }
+    }
+
+    addItemHandler(newItem) {
+        const newTodo = this.convertToDto(newItem)
         this.addItem(newTodo).then(id => {
             newTodo.id = id
             this.setState({ items: this.state.items.concat([newTodo])})
         })
     };
 
-    selectFunc = (data) => {
+    closeEditDialog() {
+        this.setState({
+            editDialogOpen: false
+        })
+    }
 
+    updateItemHandler(item) {
+        this.closeEditDialog()
+        let data = this.convertToDto(item)
+        this.updateItem(data)
+            .then(() => {
+                let idx = this.state.items.findIndex(i => i.id === data.id)
+                const arr = this.state.items
+                arr.splice(idx, 1, data)
+                this.setState({items: arr})
+            })
+    }
+
+    async updateItem(item) {
+        const response = await fetch("http://localhost:5000/todos/" + item.id, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(item)
+        })
+        if (!response.ok)
+            throw Error("Post failed")
+    }
+
+    selectItemHandler(id) {
+        this.selectedItem = this.state.items.find(item => item.id === id)
+        this.setState({editDialogOpen: true})
     };
 
     async deleteItem(id) {
@@ -86,14 +124,21 @@ class App extends React.Component {
          <div className="App">
             <div id="top-panel">
                 <h1>Tasks to do</h1>
-                <EditView saveHandler={this.addItemHandler.bind(this)}/>
+                <Card id="edit-panel" className="todo-item">
+                    <EditView saveHandler={this.addItemHandler.bind(this)}/>
+                </Card>
                 <Divider variant="middle"/>
             </div>
             <ListView items={this.state.items}
                       loading={this.state.loading}
-                      selectHandler={(data) => this.selectFunc(data)}
+                      selectHandler={(data) => this.selectItemHandler(data)}
                       removeHandler={(id) => this.removeItemHandler(id)}
                       moveHandler={(id, dir) => this.moveItemHandler(id, dir)}
+            />
+            <EditDialog isOpen={this.state.editDialogOpen}
+                        saveHandler={this.updateItemHandler.bind(this)}
+                        handleClose={this.closeEditDialog.bind(this)}
+                        item={this.selectedItem}
             />
         </div> );
     }

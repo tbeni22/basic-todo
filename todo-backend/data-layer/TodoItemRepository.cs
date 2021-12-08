@@ -151,7 +151,8 @@ namespace data_layer
                     itemToUpdate.Title = updatedItem.Title;
                     itemToUpdate.Description = updatedItem.Description;
                     itemToUpdate.Deadline = updatedItem.Deadline;
-                    itemToUpdate.OrderNumber = (int)updatedItem.OrderNumber;
+                    if (updatedItem.OrderNumber != null)
+                        itemToUpdate.OrderNumber = (int)updatedItem.OrderNumber;
 
                     var newCategory = from c in dbContext.Categories
                                       where c.Name == updatedItem.CategoryName
