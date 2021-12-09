@@ -5,7 +5,8 @@
 ### Database
 This project uses [MS SQL server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads) but can work with another DBMS after some modifications. The database connection string can be changed in the [appsettings.json](todo-backend/api-controllers/appsettings.json) file.
 1. Create a new database named TodoAppDB in localdb
-2. Run the [initializer script](todo-backend/db/db_init.sql) on the created database
+1. Run the [initializer script](todo-backend/db/db_init.sql) on the created database to add the required tables
+1. Run [this](todo-backend/db/preserve-item-order_trigger.sql) script to add the order preservation trigger to the database (this trigger is written in T-SQL, so it requires using MS SQL Server)
 
 ### Backend
 Prerequisites: [.NET 5 SDK](https://dotnet.microsoft.com/download/dotnet/5.0), already existing database (see the [database section](#database) to set it up)
