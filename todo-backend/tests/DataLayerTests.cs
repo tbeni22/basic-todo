@@ -1,6 +1,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using data_layer;
+using Microsoft.EntityFrameworkCore;
 using System;
+using data_layer;
+using data_layer.ORM;
 
 namespace tests
 {
@@ -12,9 +14,10 @@ namespace tests
         [TestInitialize]
         public void Init()
         {
-            repo = new TodoItemRepository(
-                @"data source=(localdb)\mssqllocaldb;initial catalog=TodoAppDB;integrated security=true"
-                );
+            var contextOptionsBuilder = new DbContextOptionsBuilder<TodoDbContext>();
+            contextOptionsBuilder.UseSqlServer(@"data source=(localdb)\mssqllocaldb;initial catalog=TodoAppDB;integrated security=true");
+            var db = new TodoDbContext(contextOptionsBuilder.Options);
+            repo = new TodoItemRepository(db);
         }
 
         [TestMethod]
@@ -33,7 +36,7 @@ namespace tests
         }
 
         [TestMethod]
-        [DataRow(3)]
+        [DataRow(1)]
         public void Test_GetItemById(int id)
         {
             var item = repo.GetItemById(id);
@@ -55,7 +58,7 @@ namespace tests
         }
 
         [TestMethod]
-        [DataRow(2)]
+        [DataRow(4)]
         public void Test_Remove(int idToRemove)
         {
             Assert.IsTrue(repo.Remove(idToRemove), "Removal failed!");
@@ -82,7 +85,7 @@ namespace tests
         }
 
         [TestMethod]
-        [DataRow(3)]
+        [DataRow(24)]
         public void Test_UpdateItem(int id)
         {
             const string newTitle = "new title";

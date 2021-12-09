@@ -24,9 +24,9 @@ namespace api_controllers
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddDbContext<TodoDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TodoDb")));
+            services.AddDbContext<TodoDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TodoDb")));
 
-            services.AddScoped(_ => new TodoItemRepository(Configuration.GetConnectionString("TodoDb")));
+            services.AddTransient<ITodoItemRepository, TodoItemRepository>();
             
             services.AddRouting();
             services.AddControllers();
