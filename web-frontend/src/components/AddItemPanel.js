@@ -1,8 +1,13 @@
 import React from "react";
 import {Button, Card, Grid, TextField,} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
+import PropTypes from "prop-types";
 
 export class AddItemPanel extends React.Component {
+    static propTypes = {
+        saveHandler: PropTypes.func
+    };
+
     constructor(props) {
         super(props);
         this.saveHandler = props.saveHandler;

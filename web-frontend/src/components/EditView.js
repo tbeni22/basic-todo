@@ -3,8 +3,15 @@ import {Button, Grid, TextField, ToggleButton, ToggleButtonGroup} from "@mui/mat
 import {LocalizationProvider, DatePicker} from "@mui/lab";
 import AdapterDayjs from "@mui/lab/AdapterDayjs";
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import PropTypes from "prop-types";
 
 export class EditView extends React.Component {
+    static propTypes = {
+        saveHandler: PropTypes.func,
+        cancelHandler: PropTypes.func,
+        itemData: PropTypes.object
+    }
+
     constructor(props) {
         super(props);
         this.saveHandler = props.saveHandler
@@ -59,7 +66,7 @@ export class EditView extends React.Component {
                     label="Deadline"
                     value={this.state.date}
                     onChange={(newVal) => {this.setState({ date: newVal })}}
-                    renderInput={(props) => <TextField {...props} />}
+                    renderInput={props => <TextField {...props} />}
                     minDate={new Date('2000-01-01')}
                 />
             </LocalizationProvider>

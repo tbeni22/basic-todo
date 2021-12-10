@@ -1,5 +1,19 @@
 import React from "react";
 import {Button, Card, CardActions, CardContent, CircularProgress, Grid} from "@mui/material";
+import PropTypes from 'prop-types';
+
+TodoItem.propTypes = {
+    id: PropTypes.number,
+    date: PropTypes.any,
+    state: PropTypes.string,
+    title: PropTypes.string,
+    desc: PropTypes.string,
+    loading: PropTypes.bool,
+
+    deleteHandler: PropTypes.func,
+    moveHandler: PropTypes.func,
+    editHandler: PropTypes.func
+}
 
 export function TodoItem(props) {
     function renderBody() {

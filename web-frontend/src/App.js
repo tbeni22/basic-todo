@@ -46,11 +46,11 @@ export default class App extends React.Component {
 
     addItemHandler(newItem) {
         const newTodo = this.convertToDto(newItem)
-        this.addItem(newTodo).then(id => {
+        this.addItem(newTodo).then((id) => {
             newTodo.id = id
             this.setState({ items: this.state.items.concat([newTodo])})
         })
-    };
+    }
 
     // update item on backend
     async updateItem(item) {
@@ -109,7 +109,7 @@ export default class App extends React.Component {
         this.setState({
             editDialogOpen: true
         })
-    };
+    }
 
     // delete item from backend
     async deleteItem(id) {
@@ -123,7 +123,7 @@ export default class App extends React.Component {
         this.deleteItem(id)
             .then(() => {
                 let itemsCopy = this.state.items
-                let idx = itemsCopy.findIndex((item) => item.id === id)
+                let idx = itemsCopy.findIndex(item => item.id === id)
                 itemsCopy.splice(idx, 1)
                 this.setState({
                     items: itemsCopy
@@ -140,7 +140,7 @@ export default class App extends React.Component {
     }
 
     componentDidMount() {
-        this.getList().then(success => {
+        this.getList().then((success) => {
             if (success) {
                 this.setState({loading: false})
                 console.log("list loaded")
@@ -160,8 +160,8 @@ export default class App extends React.Component {
             </div>
             <ListView items={this.state.items}
                       loading={this.state.loading}
-                      editHandler={(data) => this.openEditDialog(data)}
-                      removeHandler={(id) => this.removeItemHandler(id)}
+                      editHandler={data => this.openEditDialog(data)}
+                      removeHandler={id => this.removeItemHandler(id)}
                       moveHandler={(id, dir) => this.moveItemHandler(id, dir)}
             />
             <EditDialog isOpen={this.state.editDialogOpen}

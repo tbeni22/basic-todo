@@ -3,8 +3,17 @@ import {TodoItem} from "./TodoItem";
 import {Alert, AlertTitle, CircularProgress} from '@mui/material';
 
 import "./ItemList.css";
+import PropTypes from "prop-types";
 
 export class ListView extends React.Component {
+    static propTypes = {
+        editHandler: PropTypes.func,
+        removeHandler: PropTypes.func,
+        moveHandler: PropTypes.func,
+        items: PropTypes.array,
+        loading: PropTypes.bool
+    }
+
     constructor(props) {
         super(props)
         this.handleEdit = props.editHandler
@@ -15,7 +24,7 @@ export class ListView extends React.Component {
     }
 
     move(id, dir) {
-        let idx = this.items.findIndex((item) => item.id === id)
+        let idx = this.items.findIndex(item => item.id === id)
         let newIdx = idx + dir
 
         // prevent moving item out of array bounds
@@ -38,9 +47,9 @@ export class ListView extends React.Component {
                                  state={item.categoryName}
                                  key={item.id}
                                  id={item.id}
-                                 editHandler={(id) => this.handleEdit(id)}
+                                 editHandler={id => this.handleEdit(id)}
                                  loading={false}
-                                 deleteHandler={(id) => this.handleRemove(id)}
+                                 deleteHandler={id => this.handleRemove(id)}
                                  moveHandler={(id, dir) => this.move(id, dir)}
                         />
         })
