@@ -137,5 +137,24 @@ namespace data_layer
                 throw new NoSuchRecordException();
             }
         }
+
+        public bool MoveItem(TodoItem itemToMove)
+        {
+            if (itemToMove.OrderNumber == null) return false;
+
+            var itemFromDb = dbContext.TodoItems
+                .Where(i => i.ID == itemToMove.ID)
+                .SingleOrDefault();
+            var itemToSwitch = dbContext.TodoItems
+                .Where(i => i.OrderNumber == itemToMove.OrderNumber)
+                .SingleOrDefault();
+
+            if (itemFromDb == null || itemToSwitch == null) return false;
+
+            itemToSwitch.OrderNumber = itemFromDb.OrderNumber;
+            itemFromDb.OrderNumber = (int)itemToMove.OrderNumber;
+
+            return dbContext.SaveChanges() == 2;
+        }
     }
 }

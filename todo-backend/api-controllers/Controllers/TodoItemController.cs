@@ -76,5 +76,13 @@ namespace api_controllers.Controllers
             repo.Remove(id);
             return NoContent();
         }
+
+        [HttpPut("{id}/move")]
+        public ActionResult MoveItem([FromRoute] int id, [FromBody] TodoItem item)
+        {
+            if (id != item.ID) return BadRequest();
+            bool success = repo.MoveItem(item);
+            return success ? Ok() : BadRequest();
+        }
     }
 }

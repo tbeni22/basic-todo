@@ -65,27 +65,6 @@ export default class App extends React.Component {
             throw Error("Post failed")
     }
 
-    moveItemHandler(idx, dir) {
-        let itemsCopy = this.state.items
-        let newIdx = idx + dir
-
-        itemsCopy[idx].orderNumber += dir
-        itemsCopy[newIdx].orderNumber -= dir
-
-        // update in db
-        this.updateItem(itemsCopy[idx]).then()
-        this.updateItem(itemsCopy[newIdx]).then()
-
-        // update locally
-        let tmp = itemsCopy[idx]
-        itemsCopy[idx] = itemsCopy[newIdx]
-        itemsCopy[newIdx] = tmp
-
-        this.setState({
-            items: itemsCopy
-        })
-    }
-
     updateItemHandler(item) {
         this.closeEditDialog()
         let data = this.convertToDto(item)
@@ -96,6 +75,39 @@ export default class App extends React.Component {
                 arr.splice(idx, 1, data)
                 this.setState({items: arr})
             })
+    }
+
+    // change the order of the item on backend
+    async moveItem(item) {
+        const response = await fetch("http://localhost:5000/todos/" + item.id + "/move", {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(item)
+        })
+        if (!response.ok)
+            throw Error("Post failed")
+    }
+
+    moveItemHandler(idx, dir) {
+        let itemsCopy = this.state.items
+        let newIdx = idx + dir
+
+        itemsCopy[idx].orderNumber += dir
+        itemsCopy[newIdx].orderNumber -= dir
+
+        // update in db
+        this.moveItem(itemsCopy[idx]).then()
+
+        // update locally
+        let tmp = itemsCopy[idx]
+        itemsCopy[idx] = itemsCopy[newIdx]
+        itemsCopy[newIdx] = tmp
+
+        this.setState({
+            items: itemsCopy
+        })
     }
 
     closeEditDialog() {
