@@ -26,7 +26,7 @@ export function TodoItem(props) {
         state = state.charAt(0).toUpperCase() + state.slice(1)
 
         return (
-            <div>
+            <>
                 <CardContent>
                     <Grid direction="column" container spacing={0}>
                         <Grid item>
@@ -59,7 +59,7 @@ export function TodoItem(props) {
                         Edit
                     </Button>
                 </CardActions>
-            </div>
+            </>
         );
     }
 

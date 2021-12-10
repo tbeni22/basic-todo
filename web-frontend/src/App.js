@@ -2,7 +2,7 @@ import './App.css';
 import {ListView} from "./components/ListView";
 import {AddItemPanel} from "./components/AddItemPanel";
 import {EditDialog} from "./components/EditDialog";
-import {Divider} from "@mui/material";
+import {Box, Divider, Typography} from "@mui/material";
 import React from "react";
 
 export default class App extends React.Component {
@@ -152,12 +152,12 @@ export default class App extends React.Component {
 
     render() {
         return (
-         <div className="App">
-            <div id="top-panel">
-                <h1>Tasks to do</h1>
+         <>
+            <Box id="top-panel">
+                <Typography fontSize={26} fontWeight="bold" align="center">Tasks to do</Typography>
                 <AddItemPanel saveHandler={this.addItemHandler.bind(this)}/>
                 <Divider variant="middle"/>
-            </div>
+            </Box>
             <ListView items={this.state.items}
                       loading={this.state.loading}
                       editHandler={data => this.openEditDialog(data)}
@@ -169,6 +169,6 @@ export default class App extends React.Component {
                         handleClose={this.closeEditDialog.bind(this)}
                         item={this.selectedItem}
             />
-        </div> );
+        </> );
     }
 }
