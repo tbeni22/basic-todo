@@ -13,24 +13,24 @@ namespace api_controllers.Controllers
     [ApiController]
     public class TodoItemController : ControllerBase
     {
-        private readonly ITodoItemRepository repo;
+        private readonly TodoItemManager manager;
 
-        public TodoItemController(ITodoItemRepository context)
+        public TodoItemController(TodoItemManager context)
         {
-            repo = context;
+            manager = context;
         }
 
         [HttpGet]
         public IEnumerable<TodoItem> Get()
         {
-            return repo.ListItems();
+            return manager.ListItems();
         }
 
         // GET todos/<id>
         [HttpGet("{id}")]
         public ActionResult<TodoItem> Get([FromRoute] int id)
         {
-            var item = repo.GetItemById(id);
+            var item = manager.GetItemById(id);
             if (item == null) return NotFound();
             return Ok(item);
         }
@@ -40,7 +40,7 @@ namespace api_controllers.Controllers
         public ActionResult Post([FromBody] TodoItem newItem)
         {
             if (newItem.Title == null) return BadRequest();
-            (TodoItem? item, bool modified) = repo.Insert(newItem);
+            (TodoItem? item, bool modified) = manager.Insert(newItem);
             if (item == null) return BadRequest();
             return modified ? Created("todos/" + item.ID, item) : new StatusCodeResult(500);
         }
@@ -50,14 +50,14 @@ namespace api_controllers.Controllers
         public ActionResult Put([FromRoute] int id, [FromBody] TodoItem item) // todo: are there problems with properties without setters?
         {
             if (id != item.ID) return BadRequest();
-            return repo.UpdateItem(item) ? Ok() : BadRequest();
+            return manager.UpdateItem(item) ? Ok() : BadRequest();
         }
 
         // DELETE todos/<id>
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
-            repo.Remove(id);
+            manager.Remove(id);
             return NoContent();
         }
 
@@ -65,7 +65,7 @@ namespace api_controllers.Controllers
         public ActionResult MoveItem([FromRoute] int id, [FromBody] TodoItem item)
         {
             if (id != item.ID) return BadRequest();
-            bool success = repo.MoveItem(item);
+            bool success = manager.MoveItem(item);
             return success ? Ok() : BadRequest();
         }
     }

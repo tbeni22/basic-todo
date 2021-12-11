@@ -27,6 +27,8 @@ namespace api_controllers
             services.AddDbContext<TodoDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("TodoDb")));
 
             services.AddTransient<ITodoItemRepository, TodoItemRepository>();
+
+            services.AddTransient<TodoItemManager>();
             
             services.AddRouting();
             services.AddControllers();

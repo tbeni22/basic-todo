@@ -121,6 +121,7 @@ namespace data_layer
         {
             var dbItem = dbContext.TodoItems
                 .Where(i => i.OrderNumber == orderNumber)
+                .Include(i => i.Category)
                 .SingleOrDefault();
             return dbItem == null ? null : new TodoItem(dbItem);
         }

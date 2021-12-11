@@ -13,7 +13,6 @@ namespace data_layer
         bool Remove(int id);
         IReadOnlyCollection<TodoItem> ListItemsByCategory(string category);
         bool UpdateItem(TodoItem updatedItem);
-        bool MoveItem(TodoItem itemToMove);
         TodoItem? GetItemByOrderNumber(int orderNumber);
     }
 }
