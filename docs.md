@@ -48,7 +48,7 @@ Some properties are optional when sending objects to the server. These are:
 #### Get the list of all todos:
 `GET /todos`  
 The server returns a list of all the todo items found in the database.
-The list is represented with a JSON array.
+The list is represented with a JSON array. If no todo items are found an empty array will be returned.
 
 #### Get a specific todo item by ID:
 `GET /todos/{id}`  
@@ -64,12 +64,22 @@ Possible response codes:
 - 500: The request was correct but the item could not be inserted into the database.
 
 ### PUT
+#### Update an item:
 `PUT /todos/{id} BODY {item}`  
 Updates the item identified by the ID in the path. This ID and the JSON object's ID should be the same. The body should include the DTO with the appropriate data to update the item in the database.  
 Possible response codes:
 - 200: Item was successfully updated.
 - 400: Incorrect JSON object. Possible causes: a required property is unspecified, *categoryName* is invalid, IDs (path and body) do not match, date format of *deadline* is incorrect.
 - 500: The request was correct but the item could not be updated in the database.
+
+#### Move an item to another place in the list:
+`PUT /todos/{id}/move BODY {item}`  
+Moves the item with the specified ID to the position given in the *orderNumber* field of the JSON object sent. The item which was previously in this position will also be moved. All other fields in the DTO are unnecessary.  
+This operation is atomic. Do not use *update* to change the order of multiple items, use *move* instead!  
+Possible response codes:
+- 200: Item (and the other item in its new place) moved successfully.
+- 400: Incorrect request, item does not exist with the specified ID, or the *orderNumber* is out of range.
+- 500: The request was correct but the item could not be moved in the database.
 
 ### DELETE
 `DELETE /todos/{id}`  
