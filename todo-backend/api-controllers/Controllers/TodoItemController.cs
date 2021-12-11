@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using data_layer;
 
+#nullable enable
+
 namespace api_controllers.Controllers
 {
     [Route("todos")]
@@ -28,30 +30,19 @@ namespace api_controllers.Controllers
         [HttpGet("{id}")]
         public ActionResult<TodoItem> Get([FromRoute] int id)
         {
-            try
-            {
-                var item = repo.GetItemById(id);
-                return Ok(item);
-            }
-            catch (NoSuchRecordException)
-            {
-                return NotFound();
-            }
+            var item = repo.GetItemById(id);
+            if (item == null) return NotFound();
+            return Ok(item);
         }
 
         // POST todos
         [HttpPost]
         public ActionResult Post([FromBody] TodoItem newItem)
         {
-            try
-            {
-                (TodoItem item, bool modified) = repo.Insert(newItem);
-                return modified ? Created("todos/" + item.ID, item) : new StatusCodeResult(500);
-            }
-            catch (NoSuchRecordException)
-            {
-                return BadRequest();
-            }
+            if (newItem.Title == null) return BadRequest();
+            (TodoItem? item, bool modified) = repo.Insert(newItem);
+            if (item == null) return BadRequest();
+            return modified ? Created("todos/" + item.ID, item) : new StatusCodeResult(500);
         }
 
         // PUT todos/<id>
@@ -59,14 +50,7 @@ namespace api_controllers.Controllers
         public ActionResult Put([FromRoute] int id, [FromBody] TodoItem item) // todo: are there problems with properties without setters?
         {
             if (id != item.ID) return BadRequest();
-            try
-            {
-                return repo.UpdateItem(item) ? Ok() : new StatusCodeResult(500);
-            }
-            catch (NoSuchRecordException)
-            {
-                return BadRequest();
-            }
+            return repo.UpdateItem(item) ? Ok() : BadRequest();
         }
 
         // DELETE todos/<id>

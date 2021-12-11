@@ -5,13 +5,10 @@ using System.Text;
 using data_layer.ORM;
 using Microsoft.EntityFrameworkCore;
 
+#nullable enable
+
 namespace data_layer
 {
-    public class NoSuchRecordException : Exception
-    {
-        public NoSuchRecordException(string message = null) : base(message) { }
-    }
-
     public class TodoItemRepository : ITodoItemRepository
     {
         private readonly TodoDbContext dbContext;
@@ -30,75 +27,59 @@ namespace data_layer
             return items.ToList();
         }
 
-        public TodoItem GetItemById(int id)
+        public TodoItem? GetItemById(int id)
         {
-            try
-            {
-                var item = from i in dbContext.TodoItems.AsNoTracking()
-                                .Include(ti => ti.Category)
-                            where i.ID == id
-                            select new TodoItem(i);
-                return item.Single();
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new NoSuchRecordException(ex.Message);
-            }
+            var item = from i in dbContext.TodoItems.AsNoTracking()
+                            .Include(ti => ti.Category)
+                        where i.ID == id
+                        select new TodoItem(i);
+            return item.SingleOrDefault();
         }
 
-        public (TodoItem, bool) Insert(TodoItem item)
+        public (TodoItem?, bool) Insert(TodoItem item)
         {
-            try
+            int orderNumber;
+            if (item.OrderNumber == null)
             {
-                int orderNumber;
-                if (item.OrderNumber == null)
+                try
                 {
-                    try
-                    {
-                        var maxOrderNum = dbContext.TodoItems.Max(ti => ti.OrderNumber);
-                        orderNumber = maxOrderNum + 1;
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        orderNumber = 0;    // necessary if table is empty
-                    }
+                    var maxOrderNum = dbContext.TodoItems.Max(ti => ti.OrderNumber);
+                    orderNumber = maxOrderNum + 1;
                 }
-                else
-                    orderNumber = (int)item.OrderNumber;
-                DbTodoItem newItem = new DbTodoItem(item.Title, item.Description != null ? item.Description : "", item.Deadline, orderNumber);
-                newItem.Category = (
-                        from c in dbContext.Categories
-                        where c.Name.Equals(item.CategoryName)
-                        select c
-                    ).Single();
-                dbContext.Add(newItem);
-                int rowsModified = dbContext.SaveChanges();
-                return (new TodoItem(newItem), rowsModified == 1);
+                catch (InvalidOperationException)
+                {
+                    orderNumber = 0;    // necessary if table is empty
+                }
             }
-            catch (InvalidOperationException)
-            {
-                throw new NoSuchRecordException();
-            }
+            else
+                orderNumber = (int)item.OrderNumber;
+
+            DbTodoItem newItem = new DbTodoItem(item.Title, item.Description != null ? item.Description : "", item.Deadline, orderNumber);
+            var category = (
+                    from c in dbContext.Categories
+                    where c.Name.Equals(item.CategoryName)
+                    select c
+                ).SingleOrDefault();
+
+            if (category == null) return (null, true);
+            newItem.Category = category;
+            dbContext.Add(newItem);
+
+            int rowsModified = dbContext.SaveChanges();
+            return (new TodoItem(newItem), rowsModified == 1);
         }
 
         public bool Remove(int id)
         {
-            try
-            {
-                dbContext.Remove(
-                        (
+            var itemToRemove = (
                             from i in dbContext.TodoItems
                             where i.ID == id
                             select i
-                        )
-                        .Single()
-                    );
-                return dbContext.SaveChanges() == 1;
-            } 
-            catch (InvalidOperationException)
-            {
+                        ).SingleOrDefault();
+            if (itemToRemove == null)
                 return false;
-            }
+            dbContext.Remove(itemToRemove);
+            return dbContext.SaveChanges() == 1;
         }
 
         public IReadOnlyCollection<TodoItem> ListItemsByCategory(string category)
@@ -113,29 +94,35 @@ namespace data_layer
 
         public bool UpdateItem(TodoItem updatedItem)
         {
-            try
-            {
-                var itemToUpdate = (from ti in dbContext.TodoItems
-                                    where ti.ID == updatedItem.ID
-                                    select ti)
-                                    .Single();
-                itemToUpdate.Title = updatedItem.Title;
-                itemToUpdate.Description = updatedItem.Description;
-                itemToUpdate.Deadline = updatedItem.Deadline;
-                if (updatedItem.OrderNumber != null)
-                    itemToUpdate.OrderNumber = (int)updatedItem.OrderNumber;
+            var itemToUpdate = (from ti in dbContext.TodoItems
+                                where ti.ID == updatedItem.ID
+                                select ti)
+                                .SingleOrDefault();
+            if (itemToUpdate == null)
+                return false;
+            itemToUpdate.Title = updatedItem.Title;
+            itemToUpdate.Description = updatedItem.Description;
+            itemToUpdate.Deadline = updatedItem.Deadline;
+            if (updatedItem.OrderNumber != null)
+                itemToUpdate.OrderNumber = (int)updatedItem.OrderNumber;
 
-                var newCategory = from c in dbContext.Categories
-                                    where c.Name == updatedItem.CategoryName
-                                    select c;
-                itemToUpdate.Category = newCategory.Single();
+            var newCategory = (from c in dbContext.Categories
+                                where c.Name == updatedItem.CategoryName
+                                select c).SingleOrDefault();
+            if (newCategory == null)
+                return false;
+            itemToUpdate.Category = newCategory;
 
-                return dbContext.SaveChanges() == 1;
-            }
-            catch (InvalidOperationException)
-            {
-                throw new NoSuchRecordException();
-            }
+            dbContext.SaveChanges();
+            return true;
+        }
+
+        public TodoItem? GetItemByOrderNumber(int orderNumber)
+        {
+            var dbItem = dbContext.TodoItems
+                .Where(i => i.OrderNumber == orderNumber)
+                .SingleOrDefault();
+            return dbItem == null ? null : new TodoItem(dbItem);
         }
 
         public bool MoveItem(TodoItem itemToMove)
