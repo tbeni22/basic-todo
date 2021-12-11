@@ -23,7 +23,8 @@ export default class App extends React.Component {
             title: item.title,
             description: item.desc,
             deadline: item.date != null ? new Date (item.date).toISOString() : null,
-            categoryName: item.itemState
+            categoryName: item.itemState,
+            orderNumber: item.orderNumber
         }
     }
 
@@ -38,16 +39,20 @@ export default class App extends React.Component {
         })
         const data = await response.json()
         if (response.ok)
-            return data.id;
+            return {
+                id: data.id,
+                orderNumber: data.orderNumber
+            }
         else {
-            throw Error("Post failed")
+            throw Error("Insert (post) request failed")
         }
     }
 
     addItemHandler(newItem) {
         const newTodo = this.convertToDto(newItem)
-        this.addItem(newTodo).then((id) => {
-            newTodo.id = id
+        this.addItem(newTodo).then((data) => {
+            newTodo.id = data.id
+            newTodo.orderNumber = data.orderNumber
             this.setState({ items: this.state.items.concat([newTodo])})
         })
     }
@@ -62,7 +67,7 @@ export default class App extends React.Component {
             body: JSON.stringify(item)
         })
         if (!response.ok)
-            throw Error("Post failed")
+            throw Error("Update (put) request failed")
     }
 
     updateItemHandler(item) {
@@ -72,6 +77,7 @@ export default class App extends React.Component {
             .then(() => {
                 let idx = this.state.items.findIndex(i => i.id === data.id)
                 const arr = this.state.items
+                data.orderNumber = arr[idx].orderNumber
                 arr.splice(idx, 1, data)
                 this.setState({items: arr})
             })
@@ -87,7 +93,7 @@ export default class App extends React.Component {
             body: JSON.stringify(item)
         })
         if (!response.ok)
-            throw Error("Post failed")
+            throw Error("Move (put) request failed")
     }
 
     moveItemHandler(idx, dir) {
