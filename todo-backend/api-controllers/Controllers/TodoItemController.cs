@@ -20,6 +20,8 @@ namespace api_controllers.Controllers
             manager = context;
         }
 
+        // GET todos/
+        // Get the list of todo items
         [HttpGet]
         public IEnumerable<TodoItem> Get()
         {
@@ -27,6 +29,7 @@ namespace api_controllers.Controllers
         }
 
         // GET todos/<id>
+        // Get the data of a todo with the specified id
         [HttpGet("{id}")]
         public ActionResult<TodoItem> Get([FromRoute] int id)
         {
@@ -35,7 +38,8 @@ namespace api_controllers.Controllers
             return Ok(item);
         }
 
-        // POST todos
+        // POST todos/
+        // Add a new todo
         [HttpPost]
         public ActionResult Post([FromBody] TodoItem newItem)
         {
@@ -46,6 +50,7 @@ namespace api_controllers.Controllers
         }
 
         // PUT todos/<id>
+        // Update an existing todo
         [HttpPut("{id}")]
         public ActionResult Put([FromRoute] int id, [FromBody] TodoItem item) // todo: are there problems with properties without setters?
         {
@@ -54,6 +59,7 @@ namespace api_controllers.Controllers
         }
 
         // DELETE todos/<id>
+        // Delete a todo
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
@@ -61,6 +67,8 @@ namespace api_controllers.Controllers
             return NoContent();
         }
 
+        // PUT todos/<id>/move
+        // Move a todo to a different place in the order (atomic)
         [HttpPut("{id}/move")]
         public ActionResult MoveItem([FromRoute] int id, [FromBody] TodoItem item)
         {

@@ -27,6 +27,11 @@ namespace api_controllers
         public bool UpdateItem(TodoItem updatedItem)
             => repo.UpdateItem(updatedItem);
 
+        /// <summary>
+        /// Moves a todo item to a different place in the order (atomic)
+        /// </summary>
+        /// <param name="itemToMove">The todo item to move, with the new order number set.</param>
+        /// <returns>Wheter the operation was successful or not</returns>
         public bool MoveItem(TodoItem itemToMove)
         {
             if (itemToMove.OrderNumber == null) return false;

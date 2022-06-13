@@ -3,6 +3,9 @@ using data_layer.ORM;
 
 namespace data_layer
 {
+    /// <summary>
+    /// DTO class representing a todo item
+    /// </summary>
     public class TodoItem
     {
         public TodoItem() { }
